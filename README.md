@@ -70,18 +70,25 @@ create table if not exists complaints (
 ```
 
 - Enable RLS
+
 ```sql
-alter policy "Allow insert for anyone"
-on "public"."complaints"
-to public
-with check (true);
+ALTER TABLE "public"."complaints" ENABLE ROW LEVEL SECURITY
 ```
 
 ```sql
-alter policy "Enable read access for all users"
-on "public"."complaints"
-to public
-using (true);
+CREATE POLICY "Allow insert for anyone"
+ON "public"."complaints"
+FOR INSERT
+TO public
+WITH CHECK (true);
+```
+
+```sql
+CREATE POLICY "Enable read access for all users"
+ON "public"."complaints"
+FOR SELECT
+TO public
+WITH CHECK (true);
 ```
 
 ### 4. Take A Look Around
