@@ -1,0 +1,36 @@
+* {
+  box-sizing: border-box;
+}
+
+html {
+  line-height: 1.15; 
+  -webkit-text-size-adjust: 100%;
+}
+
+main {
+  display: block;
+}
+
+body {
+  margin: 0;
+}
+
+html,
+body,
+#root {
+  height: 100%;
+}
+
+img, svg {
+  max-width: 100%;
+  -webkit-user-drag: none;
+  pointer-events: none;
+}
+
+button {
+  cursor: pointer;
+}
+
+button:active {
+  filter: brightness(95%);
+}
