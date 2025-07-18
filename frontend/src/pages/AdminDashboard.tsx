@@ -8,12 +8,20 @@ import type { AdminComplaintStruct } from '../types/complaint';
 /* Services */
 import { fetchComplaints, deleteComplaint, toggleComplaintStatus } from '../services/complaintService';
 
+/* Components */
+import ViewMoreModal from '../components/ViewMore';
+
 
 function AdminDashboard() {
     const [complaints, setComplaints] = useState<AdminComplaintStruct[]>([]);
     const [statusFilter, setStatusFilter] = useState<'All' | 'Pending' | 'Resolved'>('All');
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(''); 
+    const [selectedComplaint, setSelectedComplaint] = useState<string | null>(null);
+
+    const [currentPage, setCurrentPage] = useState(1);
+    const complaintsPerPage = 5;
+
 
     useEffect(() => {
         fetchComplaints()
@@ -22,7 +30,17 @@ function AdminDashboard() {
             .finally(() => setLoading(false));
     }, []);
 
+    useEffect(() => {
+        setCurrentPage(1);
+    }, [statusFilter]);
+
     const filtered = statusFilter === 'All'? complaints : complaints.filter(c => c.status === statusFilter);
+
+    const totalPages = Math.ceil(filtered.length / complaintsPerPage)
+    const indexOfLastComplaint = currentPage * complaintsPerPage;
+    const indexOfFirstComplaint = indexOfLastComplaint - complaintsPerPage;
+    const paginatedComplaints = filtered.slice(indexOfFirstComplaint, indexOfLastComplaint);
+
 
     const handleDelete = async (id: string) => {
         if (!confirm('Are you sure you want to delete this complaint?')) return;
@@ -88,12 +106,26 @@ function AdminDashboard() {
                 </tr>
                 </thead>
                 <tbody>
-                {filtered.map((c) => (
+                {paginatedComplaints.map((c) => (
                     <tr key={c.id} className="border-t hover:bg-gray-50">
                     <td className="px-4 py-2">{new Date(c.created_at).toLocaleString()}</td>
                     <td className="px-4 py-2">{c.name}</td>
                     <td className="px-4 py-2">{c.email}</td>
-                    <td className="px-4 py-2 max-w-sm truncate">{c.complaint}</td>
+                    <td className="px-4 py-2 max-w-sm truncate">
+                        {c.complaint.length > 30 ? (
+                        <>
+                            {c.complaint.slice(0, 30)}...
+                            <button
+                                onClick={() => setSelectedComplaint(c.complaint)}
+                                className="bg-blue-100 hover:bg-blue-200 text-blue-500 ml-2 px-3 py-1 rounded-2xl"
+                            >
+                            View More
+                            </button>
+                        </>
+                    ) : (
+                        c.complaint
+                    )}
+                  </td>
                     <td className="px-4 py-2">
                         <span
                         className={`px-2 py-1 rounded text-sm font-medium ${
@@ -127,11 +159,58 @@ function AdminDashboard() {
                 ))}
                 </tbody>
             </table>
+            <div className="flex justify-center mt-6 space-x-2 flex-wrap">
+                <button
+                    onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
+                    disabled={currentPage === 1}
+                    className={`px-3 py-1 rounded transition
+                        ${currentPage === 1
+                          ? 'bg-gray-200 text-gray-500 cursor-not-allowed pointer-events-none'
+                          : 'bg-gray-300 hover:bg-gray-400 cursor-pointer'}`}
+                >
+                    {'<'}
+                </button>
+
+                {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
+                    <button
+                        key={page}
+                        onClick={() => setCurrentPage(page)}
+                        className={`px-3 py-1 rounded ${currentPage === page
+                            ? 'bg-blue-500 text-white font-semibold'
+                            : 'bg-gray-200 hover:bg-gray-300'
+                        }`}
+                        >
+                        {page}
+                    </button>
+                ))}
+
+                <button
+                    onClick={() => setCurrentPage((prev) => Math.min(prev + 1, totalPages))}
+                    disabled={currentPage === totalPages}
+                    className={`px-3 py-1 rounded transition
+                        ${currentPage === totalPages
+                            ? 'bg-gray-200 text-gray-500 cursor-not-allowed pointer-events-none'
+                            : 'bg-gray-300 hover:bg-gray-400 cursor-pointer'}`}
+                >
+                    {'>'}
+                </button>
+                </div>
+
+
+
+
             </div>
+        )}
+        
+        {selectedComplaint && (<ViewMoreModal
+            isOpen={true}
+            content={selectedComplaint}
+            onClose={() => setSelectedComplaint(null)}
+        />
         )}
     </div>
 
-  )
+    )
 }
 
 export default AdminDashboard;

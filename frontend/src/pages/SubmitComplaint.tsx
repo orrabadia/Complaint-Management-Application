@@ -46,7 +46,7 @@ function SubmitComplaint() {
       <form onSubmit={handleSubmit}>
         <Input label="Full Name" type="text" name="name" value={formData.name} placeholder='Full Name' onChange={handleChange} pattern="^\s*\S+\s+\S+.*$" tooltip="Please enter a full name with at least two words" required={true} />
         <Input label="Email Address" type="email" name="email" value={formData.email} placeholder='Email Address' onChange={handleChange} required={true} />
-        <TextArea label="Enter Complaints" name="complaint" value={formData.complaint} placeholder='Write any complaints you have...' onChange={handleChange} />
+        <TextArea label="Enter Complaints" name="complaint" value={formData.complaint} placeholder="Write any complaints you have (10-1000 characters)" onChange={handleChange} />
         <button type="submit" className='items-center w-full h-10 rounded-4xl text-xl text-white bg-red-600 hover:bg-red-700'>File Complaint</button>
       </form>
       </div>

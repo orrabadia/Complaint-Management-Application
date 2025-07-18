@@ -11,6 +11,7 @@ type Props = {
   onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
   tooltip?: string;
   value?: string,
+  constraints?: string
 };
 
 export default function Input({
@@ -23,22 +24,20 @@ export default function Input({
   value='',
   onChange,
   tooltip,
+  constraints,
 }: Props) {
   const [touched, setTouched] = useState(false);
 
   const isValid =
     !required || (value.trim() !== '' && (!pattern || new RegExp(pattern).test(value)));
 
-  // const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-  //   setValue(e.target.value);
-  //   onChange?.(e);
-  // };
 
   return (
     <div className="mb-4 w-full">
       <label htmlFor={name} className="block mb-1 text-2xl font-medium text-gray-700">
         {label}
       </label>
+      <p className='block mb-1.5 text-sm font-medium text-gray-700'>{constraints}</p>
       <input
         id={name}
         name={name}

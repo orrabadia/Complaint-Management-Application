@@ -111,10 +111,12 @@ using (true);
 
 3. Cross-site scripting / validation protection before creating a complaint
 
+4. A view more toggle/component to be able to read longer complaints (longer than 30 characters).
+
+5. Pagination on admin dashboard (5 complaints shown at a time)
+
 ## What I would do if I had more time
 1. Authentication (role based access/control), using Supabase Auth.
-2. A view more toggle/component to be able to read longer complaints.
-3. A date range selector to query/filter complaints by dates.
-4. Pagination, right now it will be a long list
-5. Email notifications once complaint has been resolved
-6. Implement Rich Text formatting / pdf & img uploading because most complaints have photos to go along with them.
+2. A date range selector to query/filter complaints by dates.
+3. Email notifications once complaint has been resolved
+4. Implement Rich Text formatting / pdf & img uploading because most complaints have photos to go along with them.
