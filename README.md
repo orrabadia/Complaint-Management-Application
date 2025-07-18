@@ -109,10 +109,12 @@ using (true);
 
 2. Filtering on Admin Side to limit view to All, Pending, or Resolved complaints
 
+3. Cross-site scripting / validation protection before creating a complaint
+
 ## What I would do if I had more time
-1. Authentication (role based access/control), either using Bearer tokens or actually using OAuth2/Supabase Auth and protect the admin route.
-2. Input sanitization / validation on server side to further protect against SQL injections.
-3. A view more toggle/component to be able to read longer complaints.
-4. A date range selector to query/filter complaints by dates.
-5. Pagination, right now it will be a long list
-6. Email notifications once complaint has been resolved
+1. Authentication (role based access/control), using Supabase Auth.
+2. A view more toggle/component to be able to read longer complaints.
+3. A date range selector to query/filter complaints by dates.
+4. Pagination, right now it will be a long list
+5. Email notifications once complaint has been resolved
+6. Implement Rich Text formatting / pdf & img uploading because most complaints have photos to go along with them.

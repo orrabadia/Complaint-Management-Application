@@ -1,6 +1,9 @@
 import { Request, Response } from 'express';
 import supabase from '../utils/supabase';
 
+import xss from 'xss';
+import validator from 'validator'
+
 export const getAllComplaints = async (req: Request, res: Response) => {
     const { data, error } = await supabase.from('complaints').select('*');
     if (error) {
@@ -10,10 +13,27 @@ export const getAllComplaints = async (req: Request, res: Response) => {
 };
 
 export const createComplaint = async (req: Request, res: Response) => {
-    const { name, email, complaint } = req.body;
+    let { name, email, complaint } = req.body;
+
+    /* Prevent Cross-site scripting */
+    name = xss(name);
+    email = xss(email);
+    complaint = xss(complaint);
 
     if (!name || !email || !complaint) {
         return res.status(400).json({ error: 'All fields are required.' });
+    }
+
+    if (!validator.isEmail(email)) {
+        return res.status(400).json({ error: 'Invalid email format.' });
+    }
+    
+    if (!/^\s*\S+\s+\S+.*$/.test(name)) {
+        return res.status(400).json({ error: 'Full name must include at least two words.' });
+    }
+    
+    if (!validator.isLength(complaint, { min: 10, max: 1000 })) {
+        return res.status(400).json({ error: 'Complaint must be between 10 and 1000 characters.' });
     }
 
     
@@ -22,27 +42,27 @@ export const createComplaint = async (req: Request, res: Response) => {
     .select('name, email')
     .eq('complaint', complaint);
 
-  if (fetchError) {
-    return res.status(500).json({ error: fetchError.message });
-  }
-
-  if (matches && matches.length > 0) {
-    const sameName = matches.find(c => c.name === name);
-    const sameEmail = matches.find(c => c.email === email);
-
-    let reason = '';
-    if (sameName && sameEmail) {
-      reason = 'A complaint with the same name and email has already been filed.';
-    } else if (sameName) {
-      reason = 'A complaint with the same name has already been filed.';
-    } else if (sameEmail) {
-      reason = 'A complaint with the same email has already been filed.';
+    if (fetchError) {
+        return res.status(500).json({ error: fetchError.message });
     }
 
-    if (reason) {
-      return res.status(409).json({ error: reason });
+    if (matches && matches.length > 0) {
+        const sameName = matches.find(c => c.name === name);
+        const sameEmail = matches.find(c => c.email === email);
+
+        let reason = '';
+        if (sameName && sameEmail) {
+            reason = 'A complaint with the same name and email has already been filed.';
+        } else if (sameName) {
+            reason = 'A complaint with the same name has already been filed.';
+        } else if (sameEmail) {
+            reason = 'A complaint with the same email has already been filed.';
+        }
+
+        if (reason) {
+        return res.status(409).json({ error: reason });
+        }
     }
-  }
 
     // Insert if no duplicates found
     const { data, error } = await supabase
@@ -54,7 +74,6 @@ export const createComplaint = async (req: Request, res: Response) => {
         return res.status(400).json({ error: error.message });
     }
 
-    console.log('Insert successful:', data);
     res.status(201).json(data[0]);
 };
 
