@@ -111,6 +111,8 @@ WITH CHECK (true);
 2. Same email, different name, same complaint -> request denied
 3. Same name, different email, same complaint -> complaint can be filed
 
+- Complaints shouldn't be more than 1000 characters to try to have users be more intentional with wording
+
 ## Extra features that were implemented
 1. Rate Limiting - On the client side, POST requests are limited to 10 times per minute. All requests done on admin side are not rate limited.
 
@@ -127,3 +129,4 @@ WITH CHECK (true);
 2. A date range selector to query/filter complaints by dates.
 3. Email notifications once complaint has been resolved
 4. Implement Rich Text formatting / pdf & img uploading because most complaints have photos to go along with them.
+6. Custom error modal instead of using browser alerts
