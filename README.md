@@ -10,7 +10,7 @@ Stack:
 
 ### Prerequisites
 - Node.js (v18+ recommended)
-- npm or yarn
+- npm
 - Supabase account, with an organization created
 
 ### 1. Clone Repository
